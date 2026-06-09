@@ -19,6 +19,7 @@ plugins {
     id("com.github.vlsi.crlf") version "3.0.1"
     id("com.github.vlsi.gradle-extensions") version "3.0.1"
     id("com.gradleup.nmcp") version "1.5.0"
+    id("com.gradleup.nmcp.aggregation") version "1.5.0"
     id("signing")
 }
 
@@ -51,6 +52,8 @@ dependencies {
             because("httpclient 4.5.13 fails to verify *.s3.amazonaws.com certificates, see https://github.com/burrunan/gradle-s3-build-cache/issues/23")
         }
     }
+    nmcpAggregation(project(":"))
+
     implementation(platform("software.amazon.awssdk:bom:2.40.13"))
     implementation("software.amazon.awssdk:sso") {
         because("Needed to automatically enable AWS SSO login, see https://stackoverflow.com/a/67824174")
@@ -123,12 +126,12 @@ if (!release) {
             )
         }
     }
-    nmcp {
+    nmcpAggregation {
         centralPortal {
             username = providers.environmentVariable("CENTRAL_PORTAL_USERNAME")
             password = providers.environmentVariable("CENTRAL_PORTAL_PASSWORD")
             publishingType = centralPortalPublishingType
-            verificationTimeout = Duration.ofMinutes(centralPortalPublishingTimeout)
+            validationTimeout = Duration.ofMinutes(centralPortalPublishingTimeout)
         }
     }
 }
